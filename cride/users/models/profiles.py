@@ -5,7 +5,7 @@ from django.db import models
 from cride.utils.models import CRideModel
 
 class Profile(CRideModel):
-    users = models.OneToOneField('users.User', on_delete=models.CASCADE)
+    user = models.OneToOneField('users.User', on_delete=models.CASCADE)
     picture = models.ImageField(
         'profile picture',
         upload_to = 'users/pictures/',
