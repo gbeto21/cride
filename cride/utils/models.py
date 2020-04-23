@@ -17,5 +17,5 @@ class CRideModel(models.Model):
 
     class Meta:
         abstract = True
-        get_lates_by ='created'
+        get_latest_by ='created'
         ordering = ['-created', 'modified']
