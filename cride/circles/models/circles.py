@@ -5,10 +5,10 @@ from django.db import models
 from cride.utils.models import CRideModel
 
 class Circle(CRideModel):
-    name = model.ChardField('circle name', max_length=140)
+    name = models.CharField('circle name', max_length=140)
     slug_name = models.SlugField(unique=True, max_length=40)
 
-    about = models.ChardField('circle description', max_length=255)
+    about = models.CharField('circle description', max_length=255)
     picture = models.ImageField(upload_to = 'circles/pictures', blank=True, null=True)
 
     #Stats
