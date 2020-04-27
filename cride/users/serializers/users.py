@@ -20,6 +20,7 @@ from cride.users.models import User, Profile
 import jwt
 from datetime import timedelta
 
+
 class UserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -95,13 +96,14 @@ class UserSignUpSerializer(serializers.Serializer):
 
     def gen_verifiction_token(self, user):
         exp_date = timezone.now() + timedelta(days=3)
-        payload={
+        payload = {
             'user': user.username,
             'exp': int(exp_date.timestamp()),
             'type': 'email_confirmation'
         }
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
         return token.decode()
+
 
 class UserLoginSerializer(serializers.Serializer):
     """User login serializer.
@@ -124,3 +126,26 @@ class UserLoginSerializer(serializers.Serializer):
     def create(self, data):
         token, created = Token.objects.get_or_create(user__email=self.context['user'])
         return self.context['user'], token.key
+
+
+class AccountVerificationSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+    def validate_token(self, data):
+        try:
+            payload = jwt.decode(data, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise serializers.ValidationError('Verification link has expired.')
+        except jwt.PyJWTError:
+            raise serializers.ValidationError('Invalid token')
+        if payload['type'] != 'email_confirmation':
+            raise serializers.ValidationError('Invalid token')
+
+        self.context['payload'] = payload
+        return data
+
+    def save(self):
+        payload = self.context['payload']
+        user = User.objects.get(username=payload['user'])
+        user.is_verified = True
+        user.save()
