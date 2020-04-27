@@ -27,20 +27,6 @@ class UserLoginAPIView(APIView):
         }
         return Response(data, status=status.HTTP_201_CREATED)
 
-# class UserLoginAPIView(APIView):
-#     """User login API view."""
-
-#     def post(self, request, *args, **kwargs):
-#         """Handle HTTP POST request."""
-#         serializer = UserLoginSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user, token = serializer.save()
-#         data = {
-#             'user': UserModelSerializer(user).data,
-#             'access_token': token
-#         }
-#         return Response(data, status=status.HTTP_201_CREATED)
-
 
 class UserSignUpAPIView(APIView):
     def post(self, request, *args, **kwargs):
